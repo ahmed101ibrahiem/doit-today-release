@@ -19,6 +19,11 @@ dependencies:
   # base
   easy_localization: ^3.0.7
   flutter_screenutil: ^5.9.3
+  go_router: ^14.6.2
+  
+  # Custom Widget
+  modal_bottom_sheet: ^3.0.0
+
 
 
 dev_dependencies:
