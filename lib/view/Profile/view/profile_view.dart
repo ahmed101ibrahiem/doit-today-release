@@ -5,86 +5,93 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:doit_today/core/resources/my_styles.dart';
 import 'package:focus_detector_v2/focus_detector_v2.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
   @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  @override
+  void initState() {
+    context.read<ProfileCubit>().loadProfileStats();
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return FocusDetector(
-      child: BlocProvider(
-        create: (context) => ProfileCubit()..loadProfileStats(),
-        child: Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(16.r),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    textAlign: TextAlign.center,
-                    'My Statistics',
-                    style: MyStyles.textStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-      
-                    ),
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(16.r),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  textAlign: TextAlign.center,
+                  'My Statistics',
+                  style: MyStyles.textStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+            
                   ),
-                  20.verticalSpace,
-                  BlocBuilder<ProfileCubit, ProfileState>(
-                    builder: (context, state) {
-                      if (state is ProfileLoaded) {
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                _StatCard(
-                                  title: 'Total Tasks',
-                                  value: state.totalTasks.toString(),
-                                  color: Colors.blue,
-                                  icon: Icons.task_alt,
-                                ),
-                                16.horizontalSpace,
-                                _StatCard(
-                                  title: 'Total Notes',
-                                  value: state.totalNotes.toString(),
-                                  color: Colors.amber,
-                                  icon: Icons.note,
-                                ),
-                              ],
-                            ),
-                            16.verticalSpace,
-                            Row(
-                              children: [
-                                _StatCard(
-                                  title: 'Completed',
-                                  value: state.completedTasks.toString(),
-                                  color: Colors.green,
-                                  icon: Icons.check_circle,
-                                ),
-                                16.horizontalSpace,
-                                _StatCard(
-                                  title: 'Pending',
-                                  value: state.pendingTasks.toString(),
-                                  color: Colors.red,
-                                  icon: Icons.pending_actions,
-                                ),
-                              ],
-                            ),
-                            24.verticalSpace,
-                            _ProgressSection(
-                              completed: state.completedTasks,
-                              total: state.totalTasks,
-                            ),
-                          ],
-                        );
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                ),
+                20.verticalSpace,
+                BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                    if (state is ProfileLoaded) {
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              _StatCard(
+                                title: 'Total Tasks',
+                                value: state.totalTasks.toString(),
+                                color: Colors.blue,
+                                icon: Icons.task_alt,
+                              ),
+                              16.horizontalSpace,
+                              _StatCard(
+                                title: 'Total Notes',
+                                value: state.totalNotes.toString(),
+                                color: Colors.amber,
+                                icon: Icons.note,
+                              ),
+                            ],
+                          ),
+                          16.verticalSpace,
+                          Row(
+                            children: [
+                              _StatCard(
+                                title: 'Completed',
+                                value: state.completedTasks.toString(),
+                                color: Colors.green,
+                                icon: Icons.check_circle,
+                              ),
+                              16.horizontalSpace,
+                              _StatCard(
+                                title: 'Pending',
+                                value: state.pendingTasks.toString(),
+                                color: Colors.red,
+                                icon: Icons.pending_actions,
+                              ),
+                            ],
+                          ),
+                          24.verticalSpace,
+                          _ProgressSection(
+                            completed: state.completedTasks,
+                            total: state.totalTasks,
+                          ),
+                        ],
                       );
-                    },
-                  ),
-                ],
-              ),
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),

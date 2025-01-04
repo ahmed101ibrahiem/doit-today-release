@@ -3,6 +3,7 @@ import 'package:doit_today/core/base/bloc/notes_cubit/notes_cubit.dart';
 import 'package:doit_today/core/models/request/note.model.dart';
 import 'package:doit_today/core/services/navigation_service/navigation_service.dart';
 import 'package:doit_today/core/services/sql_service/sql_service.dart';
+import 'package:doit_today/view/Profile/viewmodel/profile_viewmodel.dart';
 import 'package:doit_today/view/add_notes/view/add_notes_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,8 @@ class NotesViewmodel {
   void loadNotes(context) async {
     final allNotes = await _sqlService.loadNotes();
     BlocProvider.of<NotesCubit>(context).onUpdateUserData(allNotes);
+        context.read<ProfileCubit>().loadProfileStats();
+
   }
 
   Future<void> deleteNote(BuildContext context, {required int noteId}) async {
@@ -38,6 +41,8 @@ class NotesViewmodel {
     final allNotes = await _sqlService.loadNotes();
     if (context.mounted) {
       context.read<NotesCubit>().onUpdateUserData(allNotes);
+          context.read<ProfileCubit>().loadProfileStats();
+
     }
   }
 }

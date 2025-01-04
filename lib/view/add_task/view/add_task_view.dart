@@ -1,10 +1,8 @@
-
-
-
 import 'package:doit_today/core/base/bloc/todo_cubit/todo_cubit.dart';
 import 'package:doit_today/core/base/injection/locator.dart';
 import 'package:doit_today/core/models/request/todo_model.dart';
 import 'package:doit_today/core/services/sql_service/sql_service.dart';
+import 'package:doit_today/view/Profile/viewmodel/profile_viewmodel.dart';
 import 'package:doit_today/widgets/custom_button/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +19,7 @@ class _AddTaskViewState extends State<AddTaskView> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -35,20 +33,23 @@ class _AddTaskViewState extends State<AddTaskView> {
         title: _titleController.text,
         description: _descriptionController.text,
       );
-      
+
       // Use your existing SQL service through the viewmodel
       await locator<SqlService>().insertTodo(todo: todo);
-      
+
       // Reload todos and update state
       if (mounted) {
         final todos = await locator<SqlService>().loadTodos();
-        if(context.mounted){
-        context.read<TodosCubit>().onUpdateTodosList(todos);
-        Navigator.pop(context);
-      }}
+        if (context.mounted) {
+          context.read<TodosCubit>().onUpdateTodosList(todos);
+          context.read<ProfileCubit>().loadProfileStats();
+
+          Navigator.pop(context);
+        }
+      }
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -89,7 +90,6 @@ class _AddTaskViewState extends State<AddTaskView> {
             ),
             20.verticalSpace,
             CustomButton(title: 'Add Task', onTap: () => _submitForm(context)),
-            
           ],
         ),
       ),

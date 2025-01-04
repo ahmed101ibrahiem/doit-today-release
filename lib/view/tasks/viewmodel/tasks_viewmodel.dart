@@ -3,6 +3,7 @@ import 'package:doit_today/core/base/injection/locator.dart';
 import 'package:doit_today/core/models/request/todo_model.dart';
 import 'package:doit_today/core/services/navigation_service/navigation_service.dart';
 import 'package:doit_today/core/services/sql_service/sql_service.dart';
+import 'package:doit_today/view/Profile/viewmodel/profile_viewmodel.dart';
 import 'package:doit_today/view/add_task/view/add_task_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,8 @@ class TasksViewmode {
     final allTasks = await _sqlService.loadTodos();
     if (context.mounted) {
       context.read<TodosCubit>().onUpdateTodosList(allTasks);
+          context.read<ProfileCubit>().loadProfileStats();
+
     }
   }
 
@@ -32,6 +35,7 @@ class TasksViewmode {
     await _sqlService.updateTodo(updatedTodo);
     if (context.mounted) {
       await loadTodos(context);
+      
     }
   }
 
