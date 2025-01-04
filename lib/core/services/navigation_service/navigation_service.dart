@@ -1,5 +1,5 @@
+import 'package:doit_today/core/resources/my_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -7,22 +7,22 @@ class NavigationService {
   void push(
     BuildContext context, {
     required String path,
-    Map<String, dynamic>? queryParameters,
     Function? afterClose,
     bool isAfterClose = false,
+    Map<String, dynamic>? queryParameters,
   }) {
-    try {
-      context.pushNamed(path, extra: queryParameters).then((value) {
-        if (isAfterClose) {
-          afterClose?.call();
-        }
-      });
-    } catch (e) {
-      debugPrint('Navigation Error: $e');
-    }
+    context
+        .pushNamed(
+      path,
+      extra: queryParameters,
+    )
+        .then((value) {
+      if (isAfterClose) {
+        afterClose?.call();
+      }
+    });
   }
 
-  // designed to pop all routes until the navigation stack is cleared
   void clearAndNavigate(BuildContext context) {
     while (GoRouter.of(context).canPop() == true) {
       GoRouter.of(context).pop();
@@ -34,37 +34,49 @@ class NavigationService {
     required String path,
     Map<String, dynamic>? queryParameters,
   }) {
-    clearAndNavigate(context);
-    context.goNamed(path, queryParameters: queryParameters ?? {});
+    // clearAndNavigate(context);
+    context.pushReplacementNamed(
+      path,
+      queryParameters: queryParameters ?? {},
+    );
   }
 
+  void pop(BuildContext context, {List? results}) {
+    context.pop(results);
+  }
 
   void pushWithBottomSheet(
-  BuildContext context, {
-  required Widget child,
-  VoidCallback? onClose,
-  bool useOnClose = false,
-  double heightFactor = 0.85,
-}) {
-  showBarModalBottomSheet(
-    context: context,
-    useRootNavigator: true,
-    shape:  RoundedRectangleBorder(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(8),
-        topRight: Radius.circular(8),
-      ).r,
-    ),
-    clipBehavior: Clip.antiAliasWithSaveLayer,
-    builder: (context) => FractionallySizedBox(
-      heightFactor: heightFactor,
-      child: child,
-    ),
-  ).then((_) {
-    if (useOnClose && onClose != null) {
-      onClose();
-    }
-  });
-}
-
+    BuildContext context, {
+    required Widget path,
+    Function? next,
+    bool? useNext = false,
+    double? height,
+    bool haveDynamicSize = false,
+  }) {
+    FocusScope.of(context).unfocus();
+   // isBottomSheetOpen = true;
+    showBarModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: MyStyles.borderRadius(type: BorderRadiusType.top),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: haveDynamicSize
+            ? path
+            : FractionallySizedBox(
+                heightFactor: height ?? 0.60,
+                child: path,
+              ),
+      ),
+    ).then((value) {
+   //   isBottomSheetOpen = false;
+      if (useNext ?? false) {
+        next?.call();
+      }
+    });
+  }
 }
