@@ -1,4 +1,4 @@
-package com.example.doit_today
+package com.elsabaa.doit_today
 
 import io.flutter.embedding.android.FlutterActivity
 
